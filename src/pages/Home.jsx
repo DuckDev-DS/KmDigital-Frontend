@@ -43,6 +43,17 @@ function Home() {
   // Manejo de cambios en el formulario del Hero
 
   const handleHeroChange = (key, value) => {
+    let newValue = value
+
+    // Evitar números negativos en precioMin y precioMax
+    if (key === 'precioMin' || key === 'precioMax') {
+      const num = Number(value)
+      if (Number.isNaN(num) || num < 0) {
+        newValue = '0'
+      } else {
+        newValue = String(num)
+      }
+    }
     setHeroFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -111,6 +122,7 @@ function Home() {
       type: 'number',
       placeholder: 'Ej: 15000000',
       colSize: 6,
+      min: 0,
     },
     {
       key: 'marcaId',
@@ -121,6 +133,7 @@ function Home() {
       optionValue: 'id',
       placeholder: 'Seleccione una marca',
       colSize: 6,
+      min: 0,
     }
   ]
 
