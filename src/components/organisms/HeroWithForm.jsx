@@ -5,6 +5,7 @@ import Button from '../atoms/Button'
 import InputField from '../molecules/InputField'
 import SelectField from '../molecules/SelectField'
 
+import '../../styles/components/organisms/HeroWithForm.css'
 
 function HeroWithForm({
   title,
@@ -30,7 +31,7 @@ function HeroWithForm({
       options = [],
       optionLabel = 'nombre',
       optionValue = 'id',
-      colSize = 12, // para controlar layout por campo
+      colSize = 12,
     } = field
 
     const value = values[key] ?? ''
@@ -51,7 +52,6 @@ function HeroWithForm({
       )
     }
 
-    //text / email / number / password, etc.
     return (
       <Col key={key} xs={12} md={colSize}>
         <InputField
@@ -66,43 +66,29 @@ function HeroWithForm({
   }
 
   return (
-    <Row className="align-items-center mb-5">
+    <Row className="align-items-center mb-5 hero-with-form">
       <Col md={6} className="mb-4 mb-md-0">
-        <Text as="h1" className="fw-bold mb-3">
+        <Text as="h1" className="fw-bold mb-3 hero-with-form-title">
           {title}
         </Text>
         {subtitle && (
-          <Text className="text-muted mb-4">
+          <Text className="text-muted mb-4 hero-with-form-subtitle">
             {subtitle}
           </Text>
         )}
 
         <form onSubmit={handleSubmit}>
-          <Row>
-            {fields.map(renderField)}
-          </Row>
-
-          <Button type="submit" className="mt-2 w-100">
+          <Row>{fields.map(renderField)}</Row>
+          <Button type="submit" className="mt-2 w-100 hero-with-form-button">
             {submitLabel}
           </Button>
         </form>
       </Col>
 
-      <Col md={6}>
+      <Col md={6} className="hero-with-form-right">
         {rightContent ?? (
-          <div
-            className="w-100 h-100 d-flex align-items-center justify-content-center"
-            style={{
-              minHeight: '260px',
-              borderRadius: '16px',
-              background:
-                'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #f36c21 100%)',
-              color: 'white',
-              boxShadow: '0 18px 35px rgba(15, 23, 42, 0.4)',
-            }}
-          >
+          <div className="hero-with-form-right-panel">
             <Text as="h3" className="fw-semibold text-center px-4">
-              {/* contenido por defecto si no mandas rightContent */}
               Una experiencia digital moderna para tu proyecto.
             </Text>
           </div>

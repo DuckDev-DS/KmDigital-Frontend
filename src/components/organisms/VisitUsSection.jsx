@@ -2,9 +2,11 @@ import React from 'react'
 import { Row, Col, Card } from 'react-bootstrap'
 import Text from '../atoms/Text'
 
+import '../../styles/components/organisms/VisitUsSection.css'
+
 function VisitUsSection() {
   return (
-    <section className="mt-5">
+    <section className="mt-5 visitus-section">
       <Text as="h2" className="h4 mb-3">
         Visítanos
       </Text>
@@ -34,15 +36,7 @@ function VisitUsSection() {
             </Col>
 
             <Col md={4} className="mt-3 mt-md-0">
-              <div
-                style={{
-                  width: '100%',
-                  height: '160px',
-                  borderRadius: '12px',
-                  backgroundColor: '#e5e7eb',
-                }}
-                className="d-flex align-items-center justify-content-center"
-              >
+              <div className="visit-us-map-placeholder">
                 <Text className="text-muted text-center px-3">
                   Aquí después podemos poner un mapa o una foto de la sucursal.
                 </Text>

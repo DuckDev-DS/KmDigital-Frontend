@@ -1,70 +1,128 @@
-import React from 'react'
-import { Row, Col } from 'react-bootstrap'
-import Text from '../atoms/Text'
-import Button from '../atoms/Button'
-
+import React, { useRef } from 'react'
+import '../../styles/components/organisms/IconGridSection.css'
 
 function IconGridSection({
   title,
   subtitle,
   items = [],
-  getKey = (item) => item.id,
-  getLabel = (item) => item.nombre ?? '',
-  getIconLetter = (item) => getLabel(item).charAt(0).toUpperCase(),
-  renderIcon,
   selectedId,
   onSelect,
+  getKey = (item) => item.id,             
+  getLabel = (item) => item.label,        
+  getImage = (item) => item.image,        
+  showFilter = true,      //ocultar filtro                 
 }) {
+  const trackRef = useRef(null)
+
+  const handleSelect = (id, item) => {
+    if (onSelect) {
+      onSelect(id, item)
+    }
+  }
+
+  const scroll = (direction) => {
+    if (!trackRef.current) return
+    const amount = 300
+    trackRef.current.scrollBy({
+      left: direction === 'left' ? -amount : amount,
+      behavior: 'smooth',
+    })
+  }
+
+  const handleSelectChange = (event) => {
+    const value = event.target.value
+    const id = value === '' ? '' : value
+    const item = items.find((it) => String(getKey(it)) === String(id))
+    handleSelect(id, item)
+  }
+
   return (
-    <section className="mb-5">
-      <Text as="h2" className="h4 mb-2">
-        {title}
-      </Text>
-      {subtitle && (
-        <Text className="text-muted mb-3">
-          {subtitle}
-        </Text>
-      )}
+    <section className="brand-section">
+      <div className="brand-section-header">
 
-      <Row className="g-3">
-        {items.map((item) => {
-          const key = String(getKey(item))
-          const label = getLabel(item)
-          const isActive = selectedId != null && String(selectedId) === key
+        <div className="brand-section-title-block">
+          <h2 className="brand-section-title">{title}</h2>
+          {subtitle && (
+            <p className="brand-section-subtitle">
+              {subtitle}
+            </p>
+          )}
+        </div>
 
-          return (
-            <Col key={key} xs={6} sm={4} md={3} lg={2}>
-              <Button
-                variant={isActive ? 'primary' : 'outline-secondary'}
-                className="w-100 d-flex flex-column align-items-center py-3"
-                onClick={() => onSelect?.(key, item)}
+        {showFilter && (
+          <div className="brand-section-filter">
+            <select
+              className="brand-filter-select"
+              value={selectedId || ''}
+              onChange={handleSelectChange}
+            >
+              <option value="">Filtrar</option>
+              {items.map((item) => {
+                const id = getKey(item)
+                const label = getLabel(item)
+                return (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+        )}
+
+      </div>
+
+      <div className="brand-carousel-wrapper">
+        <button
+          type="button"
+          className="brand-carousel-arrow brand-carousel-arrow--left"
+          onClick={() => scroll('left')}
+        >
+          ‹
+        </button>
+
+        <div className="brand-carousel-track" ref={trackRef}>
+          {items.map((item) => {
+            const id = getKey(item)
+            const label = getLabel(item)
+            const img = getImage(item)
+
+            return (
+              <button
+                key={id}
+                type="button"
+                className={
+                  'brand-card' +
+                  (String(selectedId) === String(id)
+                    ? ' brand-card--active'
+                    : '')
+                }
+                onClick={() => handleSelect(id, item)}
               >
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '999px',
-                    backgroundColor: '#f3f4f6',
-                    marginBottom: '8px',
-                  }}
-                  className="d-flex align-items-center justify-content-center"
-                >
-                  {renderIcon ? (
-                    renderIcon(item)
-                  ) : (
-                    <Text className="fw-bold mb-0">
-                      {getIconLetter(item)}
-                    </Text>
-                  )}
-                </div>
-                <Text className="small mb-0 text-center">
-                  {label}
-                </Text>
-              </Button>
-            </Col>
-          )
-        })}
-      </Row>
+                {img ? (
+                  <img
+                    src={img}
+                    alt={label}
+                    className="brand-card-logo"
+                  />
+                ) : (
+                  <span className="brand-card-fallback">
+                    {label?.charAt(0) || '?'}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        <button
+          type="button"
+          className="brand-carousel-arrow brand-carousel-arrow--right"
+          onClick={() => scroll('right')}
+        >
+          ›
+        </button>
+      </div>
     </section>
   )
 }

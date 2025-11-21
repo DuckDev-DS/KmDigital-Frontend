@@ -1,18 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import HeroWithForm from '../components/organisms/HeroWithForm.jsx'
 import IconGridSection from '../components/organisms/IconGridSection.jsx'
 import VisitUsSection from '../components/organisms/VisitUsSection.jsx'
-import { MARCAS } from '../datos/marcas.js'
-import { ANIOS } from '../datos/anios.js'
+
+import MarcasService from '../services/MarcasService.jsx'
+import VehiculosService from '../services/VehiculosService.jsx'
 
 function Home() {
+  const [marcas, setMarcas] = useState([])
+  const [loadingMarcas, setLoadingMarcas] = useState(true)
+  const [errorMarcas, setErrorMarcas] = useState(false)
+
   const [selectedBrandId, setSelectedBrandId] = useState('')
 
   const [heroFilters, setHeroFilters] = useState({
     texto: '',
     marcaId: '',
-    anioMin: '',
+    precioMin: '',
+    precioMax: '',
   })
+
+  // En el futuro puedes guardar aquí los vehículos filtrados
+  // const [vehiculos, setVehiculos] = useState([])
+
+  // Cargar marcas desde la API 
+  useEffect(() => {
+    const loadMarcas = async () => {
+      try {
+        const data = await MarcasService.getAll()
+        setMarcas(Array.isArray(data) ? data : [])
+      } catch (error) {
+        console.error('Error cargando marcas desde backend:', error)
+        setErrorMarcas(true)
+      } finally {
+        setLoadingMarcas(false)
+      }
+    }
+
+    loadMarcas()
+  }, [])
+
+  // Manejo de cambios en el formulario del Hero
 
   const handleHeroChange = (key, value) => {
     setHeroFilters((prev) => ({
@@ -21,46 +49,86 @@ function Home() {
     }))
   }
 
-  const handleHeroSubmit = (values) => {
-    console.log('Filtros desde Hero (visual):', values)
+  // Filtro por precio usando el service
+  const filtrarPorPrecio = async (precioMin, precioMax) => {
+    try {
+      if (!precioMin || !precioMax) {
+        console.warn('Para filtrar por precio se necesitan ambos valores.')
+        return
+      }
+
+      const data = await VehiculosService.getByRangoPrecio(precioMin, precioMax)
+      console.log('Vehículos filtrados por precio:', data)
+
+      // Más adelante setVehiculos(data)
+    } catch (error) {
+      console.error(
+        `Error al filtrar vehículos por precio entre ${precioMin} y ${precioMax}:`,
+        error
+      )
+    }
   }
 
+
+  // Enviar filtros del Hero
+
+  const handleHeroSubmit = async (values) => {
+    console.log('Filtros enviados desde el Hero:', values)
+    const { precioMin, precioMax } = values
+    await filtrarPorPrecio(precioMin, precioMax)
+  }
+  // Selección de marca desde el carrusel
   const handleBrandSelect = (id, item) => {
-    setSelectedBrandId((prev) => (prev === id ? '' : id))
-    console.log('Marca seleccionada (visual):', id, item)
+    setSelectedBrandId((prev) => (String(prev) === String(id) ? '' : id))
+
+    setHeroFilters((prev) => ({
+      ...prev,
+      marcaId: String(prev.marcaId) === String(id) ? '' : id,
+    }))
+
+    console.log('Marca seleccionada:', id, item)
   }
 
+  // Campos del formulario del Hero
   const heroFields = [
     {
       key: 'texto',
-      label: '¿Qué estás buscando?',
+      label: '¿Qué buscas?',
       type: 'text',
       placeholder: 'Ej: SUV, Toyota, automático...',
       colSize: 12,
     },
     {
-      key: 'marcaId',
-      label: 'Marca',
-      type: 'select',
-      options: MARCAS,
-      placeholder: 'Todas',
+      key: 'precioMin',
+      label: 'Precio mínimo',
+      type: 'number',
+      placeholder: 'Ej: 5000000',
       colSize: 6,
     },
     {
-      key: 'anioMin',
-      label: 'Año mínimo',
-      type: 'select',
-      options: ANIOS,
-      placeholder: 'Cualquiera',
+      key: 'precioMax',
+      label: 'Precio máximo',
+      type: 'number',
+      placeholder: 'Ej: 15000000',
       colSize: 6,
     },
+    {
+      key: 'marcaId',
+      label: 'Marca',
+      type: 'select',
+      options: marcas,
+      optionLabel: 'nombre',
+      optionValue: 'id',
+      placeholder: 'Seleccione una marca',
+      colSize: 6,
+    }
   ]
 
   return (
     <div>
       <HeroWithForm
         title="Encuentra aquí tu auto"
-        subtitle="Explora nuestro catálogo de vehículos, filtra por marca, año y más. Haz que tu próxima compra sea más fácil con KM Digital."
+        subtitle="Filtra por marca y rango de precio para encontrar el vehículo que necesitas."
         fields={heroFields}
         values={heroFilters}
         onChange={handleHeroChange}
@@ -68,13 +136,25 @@ function Home() {
         submitLabel="Buscar vehículos"
       />
 
-      <IconGridSection
-        title="Filtrar por marca"
-        subtitle="Elige una marca para ver vehículos disponibles."
-        items={MARCAS}
-        selectedId={selectedBrandId}
-        onSelect={handleBrandSelect}
-      />
+      {loadingMarcas ? (
+        <p className="text-center mt-4">Cargando marcas...</p>
+      ) : errorMarcas ? (
+        <p className="text-center text-danger">
+          No se pudieron cargar las marcas desde el servidor.
+        </p>
+      ) : (
+        <IconGridSection
+          title="Conoce las marcas que están en KM Digital"
+          subtitle="Selecciona una marca para explorar vehículos disponibles."
+          items={marcas}
+          selectedId={selectedBrandId}
+          onSelect={handleBrandSelect}
+          getKey={(m) => m.id}
+          getLabel={(m) => m.nombre}
+          getImage={(m) => m.imagenMarca} //API
+          showFilter={true}
+        />
+      )}
 
       <VisitUsSection />
     </div>
