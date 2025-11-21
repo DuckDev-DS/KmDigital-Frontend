@@ -50,8 +50,6 @@
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 
-/* Carrusel */
-
 .brand-carousel-wrapper {
   position: relative;
   display: flex;
@@ -60,15 +58,16 @@
 
 .brand-carousel-track {
   display: flex;
-  gap: 2.5rem;
+  gap: 3rem;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 0.75rem 2.5rem; /* espacio para las flechas */
+  padding: 1rem 3rem;
 }
 
 .brand-carousel-track::-webkit-scrollbar {
   height: 6px;
 }
+
 .brand-carousel-track::-webkit-scrollbar-thumb {
   background-color: #d1d5db;
   border-radius: 999px;
@@ -94,24 +93,24 @@
 }
 
 .brand-carousel-arrow--left {
-  left: 0.25rem;
+  left: 0.5rem;
 }
 
 .brand-carousel-arrow--right {
-  right: 0.25rem;
+  right: 0.5rem;
 }
 
 .brand-card {
-  min-width: 110px;
-  max-width: 140px;
-  height: 70px;
-  border-radius: 0.75rem;
+  min-width: 160px;
+  max-width: 200px;
+  height: 100px;
+  border-radius: 0.9rem;
   border: 1px solid #e5e7eb;
   background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease,
     border-color 0.15s ease;
@@ -140,8 +139,6 @@
   box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
 }
 
-/* Responsivo */
-
 @media (max-width: 768px) {
   .brand-section-header {
     flex-direction: column;
@@ -157,15 +154,15 @@
   }
 
   .brand-carousel-track {
-    padding-inline: 2.25rem;
-    gap: 1.5rem;
+    padding-inline: 2.5rem;
+    gap: 2rem;
   }
 }
 
 @media (max-width: 320px) {
   .brand-card {
-    min-width: 90px;
-    height: 60px;
-    padding: 0.4rem 0.5rem;
+    min-width: 130px;
+    height: 90px;
+    padding: 0.5rem 0.75rem;
   }
 }

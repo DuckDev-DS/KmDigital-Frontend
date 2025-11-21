@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import '../../styles/components/organisms/IconGridSection.css'
 
 function IconGridSection({
@@ -7,10 +7,10 @@ function IconGridSection({
   items = [],
   selectedId,
   onSelect,
-  getKey = (item) => item.id,             
-  getLabel = (item) => item.label,        
-  getImage = (item) => item.image,        
-  showFilter = true,      //ocultar filtro                 
+  getKey = (item) => item.id,
+  getLabel = (item) => item.label,
+  getImage = (item) => item.image,
+  showFilter = true,
 }) {
   const trackRef = useRef(null)
 
@@ -20,56 +20,46 @@ function IconGridSection({
     }
   }
 
-  const scroll = (direction) => {
+  const scroll = (direction = 'right') => {
     if (!trackRef.current) return
-    const amount = 300
-    trackRef.current.scrollBy({
-      left: direction === 'left' ? -amount : amount,
-      behavior: 'smooth',
-    })
+    const track = trackRef.current
+    const amount = 220 // ancho aproximado de una card
+
+    if (direction === 'right') {
+      const maxScroll = track.scrollWidth - track.clientWidth
+      const next = track.scrollLeft + amount
+
+      if (next >= maxScroll) {
+        track.scrollTo({ left: 0, behavior: 'smooth' })
+      } else {
+        track.scrollBy({ left: amount, behavior: 'smooth' })
+      }
+    } else {
+      const next = track.scrollLeft - amount
+      track.scrollTo({ left: next < 0 ? 0 : next, behavior: 'smooth' })
+    }
   }
 
-  const handleSelectChange = (event) => {
-    const value = event.target.value
-    const id = value === '' ? '' : value
-    const item = items.find((it) => String(getKey(it)) === String(id))
-    handleSelect(id, item)
-  }
+  // Carrusel automático: 1 card a la derecha cada 1.5 segundos
+  useEffect(() => {
+    if (!items || items.length === 0) return
+
+    const intervalId = setInterval(() => {
+      scroll('right')
+    }, 1500)
+
+    return () => clearInterval(intervalId)
+  }, [items])
 
   return (
     <section className="brand-section">
       <div className="brand-section-header">
-
         <div className="brand-section-title-block">
           <h2 className="brand-section-title">{title}</h2>
           {subtitle && (
-            <p className="brand-section-subtitle">
-              {subtitle}
-            </p>
+            <p className="brand-section-subtitle">{subtitle}</p>
           )}
         </div>
-
-        {showFilter && (
-          <div className="brand-section-filter">
-            <select
-              className="brand-filter-select"
-              value={selectedId || ''}
-              onChange={handleSelectChange}
-            >
-              <option value="">Filtrar</option>
-              {items.map((item) => {
-                const id = getKey(item)
-                const label = getLabel(item)
-                return (
-                  <option key={id} value={id}>
-                    {label}
-                  </option>
-                )
-              })}
-            </select>
-          </div>
-        )}
-
       </div>
 
       <div className="brand-carousel-wrapper">
@@ -77,6 +67,7 @@ function IconGridSection({
           type="button"
           className="brand-carousel-arrow brand-carousel-arrow--left"
           onClick={() => scroll('left')}
+          aria-label="Desplazar marcas a la izquierda"
         >
           ‹
         </button>
@@ -119,6 +110,7 @@ function IconGridSection({
           type="button"
           className="brand-carousel-arrow brand-carousel-arrow--right"
           onClick={() => scroll('right')}
+          aria-label="Desplazar marcas a la derecha"
         >
           ›
         </button>

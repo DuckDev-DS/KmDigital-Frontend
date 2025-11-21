@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import HeroWithForm from '../components/organisms/HeroWithForm.jsx'
 import IconGridSection from '../components/organisms/IconGridSection.jsx'
 import VisitUsSection from '../components/organisms/VisitUsSection.jsx'
-
 import MarcasService from '../services/MarcasService.jsx'
 import VehiculosService from '../services/VehiculosService.jsx'
 
@@ -20,10 +19,8 @@ function Home() {
     precioMax: '',
   })
 
-  // En el futuro puedes guardar aquí los vehículos filtrados
   // const [vehiculos, setVehiculos] = useState([])
 
-  // Cargar marcas desde la API 
   useEffect(() => {
     const loadMarcas = async () => {
       try {
@@ -40,12 +37,9 @@ function Home() {
     loadMarcas()
   }, [])
 
-  // Manejo de cambios en el formulario del Hero
-
   const handleHeroChange = (key, value) => {
     let newValue = value
 
-    // Evitar números negativos en precioMin y precioMax
     if (key === 'precioMin' || key === 'precioMax') {
       const num = Number(value)
       if (Number.isNaN(num) || num < 0) {
@@ -54,13 +48,13 @@ function Home() {
         newValue = String(num)
       }
     }
+
     setHeroFilters((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: newValue,
     }))
   }
 
-  // Filtro por precio usando el service
   const filtrarPorPrecio = async (precioMin, precioMax) => {
     try {
       if (!precioMin || !precioMax) {
@@ -71,7 +65,7 @@ function Home() {
       const data = await VehiculosService.getByRangoPrecio(precioMin, precioMax)
       console.log('Vehículos filtrados por precio:', data)
 
-      // Más adelante setVehiculos(data)
+      // setVehiculos(data)
     } catch (error) {
       console.error(
         `Error al filtrar vehículos por precio entre ${precioMin} y ${precioMax}:`,
@@ -80,15 +74,13 @@ function Home() {
     }
   }
 
-
-  // Enviar filtros del Hero
-
   const handleHeroSubmit = async (values) => {
     console.log('Filtros enviados desde el Hero:', values)
+
     const { precioMin, precioMax } = values
     await filtrarPorPrecio(precioMin, precioMax)
   }
-  // Selección de marca desde el carrusel
+
   const handleBrandSelect = (id, item) => {
     setSelectedBrandId((prev) => (String(prev) === String(id) ? '' : id))
 
@@ -100,7 +92,6 @@ function Home() {
     console.log('Marca seleccionada:', id, item)
   }
 
-  // Campos del formulario del Hero
   const heroFields = [
     {
       key: 'texto',
@@ -115,6 +106,7 @@ function Home() {
       type: 'number',
       placeholder: 'Ej: 5000000',
       colSize: 6,
+      min: 0,
     },
     {
       key: 'precioMax',
@@ -133,8 +125,7 @@ function Home() {
       optionValue: 'id',
       placeholder: 'Seleccione una marca',
       colSize: 6,
-      min: 0,
-    }
+    },
   ]
 
   return (
@@ -164,7 +155,7 @@ function Home() {
           onSelect={handleBrandSelect}
           getKey={(m) => m.id}
           getLabel={(m) => m.nombre}
-          getImage={(m) => m.imagenMarca} //API
+          getImage={(m) => m.imagenMarca}
           showFilter={true}
         />
       )}
