@@ -1,0 +1,7 @@
+.card-grid {
+  min-height: 200px;
+}
+
+.card-grid-item {
+  display: flex;
+}

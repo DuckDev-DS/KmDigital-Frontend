@@ -1,22 +1,37 @@
 import { useEffect, useState } from 'react'
 
-export function vanish(showTime = 1200, fadeTime = 500) {
+export function vanish(showTime = 1200, fadeTime = 500, externalTrigger = null) {
   const [showSplash, setShowSplash] = useState(true)
   const [fadeOut, setFadeOut] = useState(false)
 
   useEffect(() => {
-    const timerShow = setTimeout(() => {
-      setFadeOut(true)
+    let showTimer
+    let hideTimer
 
-      const timerHide = setTimeout(() => {
-        setShowSplash(false)
-      }, fadeTime)
+    //MODO CONTROLADO POR TRIGGER EXTERNO
+    if (externalTrigger !== null) {
+      if (externalTrigger) {
+        // cuando externalTrigger = true, iniciamos fade
+        setFadeOut(true)
+        hideTimer = setTimeout(() => {
+          setShowSplash(false)
+        }, fadeTime)
+      }
+    } else {
+      //MODO POR TIEMPO 
+      showTimer = setTimeout(() => {
+        setFadeOut(true)
+        hideTimer = setTimeout(() => {
+          setShowSplash(false)
+        }, fadeTime)
+      }, showTime)
+    }
 
-      return () => clearTimeout(timerHide)
-    }, showTime)
-
-    return () => clearTimeout(timerShow)
-  }, [showTime, fadeTime])
+    return () => {
+      if (showTimer) clearTimeout(showTimer)
+      if (hideTimer) clearTimeout(hideTimer)
+    }
+  }, [showTime, fadeTime, externalTrigger])
 
   return { showSplash, fadeOut }
 }

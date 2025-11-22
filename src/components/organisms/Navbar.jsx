@@ -1,10 +1,19 @@
 import React from 'react'
 import { Navbar as RBNavbar, Container, Nav } from 'react-bootstrap'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 import '../../styles/components/organisms/Navbar.css'
 
 function Navbar() {
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/') // redirige al home
+  }
+
   return (
     <RBNavbar expand="lg" className="km-navbar">
       <Container>
@@ -46,13 +55,30 @@ function Navbar() {
               Contáctanos
             </Nav.Link>
 
-            <Nav.Link
-              as={NavLink}
-              to="/login"
-              className="km-nav-link km-nav-link-btn km-nav-link-login"
-            >
-              Iniciar sesión
-            </Nav.Link>
+            {!isAuthenticated && (
+              <Nav.Link
+                as={NavLink}
+                to="/login"
+                className="km-nav-link km-nav-link-btn km-nav-link-login"
+              >
+                Iniciar sesión
+              </Nav.Link>
+            )}
+
+            {isAuthenticated && (
+              <>
+                <span className="km-navbar-username">
+                  Hola, {user?.nombre || 'Usuario'}
+                </span>
+
+                <button
+                  className="km-navbar-logout-btn"
+                  onClick={handleLogout}
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            )}
 
           </Nav>
         </RBNavbar.Collapse>

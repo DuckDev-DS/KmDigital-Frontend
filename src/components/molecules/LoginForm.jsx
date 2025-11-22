@@ -1,67 +1,68 @@
 import React, { useState } from 'react'
-import InputField from './InputField'
-import Button from '../atoms/Button'
-import Text from '../atoms/Text'
-import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
+import '../../styles/components/molecules/LoginForm.css'
 
 function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [correo, setCorreo] = useState('')
+  const [contrasena, setContrasena] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  const { login } = useAuth()
+  const { login, authLoading } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
 
-    try {
-      if (!email || !password) throw new Error('Completa los campos')
-
-      // Aquí más adelante conectamos con /api/v1/usuarios/login
-      const fakeUser = {
-        email,
-        nombre: 'Usuario Demo',
-      }
-
-      login(fakeUser)
-      navigate('/')
-    } catch (err) {
-      setError(err.message)
+    if (!correo || !contrasena) {
+      setError('Ingresa tu correo y contraseña.')
+      return
     }
 
-    setLoading(false)
+    const { ok, message } = await login(correo, contrasena)
+
+    if (!ok) {
+      setError(message)
+      return
+    }
+
+    navigate('/')
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: "400px" }}>
-      <Text as="h3" className="mb-3">Iniciar sesión</Text>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <div className="mb-3">
+        <label className="form-label">Correo electrónico</label>
+        <input
+          type="email"
+          className="form-control"
+          value={correo}
+          onChange={(e) => setCorreo(e.target.value)}
+          placeholder="ejemplo@correo.com"
+        />
+      </div>
 
-      <InputField
-        label="Correo"
-        type="email"
-        value={email}
-        placeholder="correo@ejemplo.com"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div className="mb-3">
+        <label className="form-label">Contraseña</label>
+        <input
+          type="password"
+          className="form-control"
+          value={contrasena}
+          onChange={(e) => setContrasena(e.target.value)}
+          placeholder="********"
+        />
+      </div>
 
-      <InputField
-        label="Contraseña"
-        type="password"
-        value={password}
-        placeholder="********"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      {error && <p className="login-error">{error}</p>}
 
-      {error && <Text className="text-danger mb-2">{error}</Text>}
-
-      <Button type="submit" variant="primary" className="w-100" disabled={loading}>
-        {loading ? 'Ingresando...' : 'Ingresar'}
-      </Button>
+      <button
+        type="submit"
+        className="btn btn-primary w-100 login-button"
+        disabled={authLoading}
+      >
+        {authLoading ? 'Ingresando...' : 'Ingresar'}
+      </button>
     </form>
   )
 }

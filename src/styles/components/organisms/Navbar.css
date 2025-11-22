@@ -1,8 +1,8 @@
 .km-navbar {
   background: linear-gradient(135deg, #0a1d37 0%, #0f2f5a 40%, #1d4e89 100%);
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 /* Marca izquierda */
@@ -61,16 +61,45 @@
 }
 
 .km-nav-link-login:hover {
-  background-color: #f97316; /* un naranjito de acento */
+  background-color: #f97316; 
   color: #111827 !important;
   border-color: transparent;
 }
 
-/* Toggle en móvil */
+
 .km-navbar-toggle {
   border-color: rgba(249, 250, 251, 0.4);
 }
 
 .km-navbar-toggle:focus {
   box-shadow: 0 0 0 2px rgba(248, 250, 251, 0.4);
+}
+
+.km-navbar-username {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-left: 0.6rem;
+  margin-right: 0.4rem;
+}
+
+
+.km-navbar-logout-btn {
+  padding: 0.32rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 250, 252, 0.7);
+  background-color: transparent;
+  color: #f9fafb;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, transform 0.2s ease;
+}
+
+.km-navbar-logout-btn:hover {
+  background-color: #f1f1f1; 
+  color: #111827;
+  border-color: transparent;
+  transform: translateY(-1px);
 }
