@@ -72,7 +72,7 @@ export const useHomeData = () => {
     console.log('Marca seleccionada desde carrusel:', item)
   }
 
-  const handleCountrySelect = (id, item) => {
+  const handlePaisSelect = (id, item) => {
     setSelectedCountryId(id)
     console.log('País seleccionado desde carrusel:', item)
   }
@@ -95,6 +95,6 @@ export const useHomeData = () => {
 
     // handlers
     handleBrandSelect,
-    handleCountrySelect,
+    handlePaisSelect,
   }
 }

@@ -1,4 +1,3 @@
-// src/pages/user/pages2/Catalogo.jsx
 import React from 'react'
 import { useCatalogoData } from '../datapages/CatalogoData.js'
 
@@ -10,6 +9,7 @@ function Catalogo() {
   const {
     filteredVehiculos,
     marcas,
+    paises,
     loading,
     error,
     filters,
@@ -28,6 +28,7 @@ function Catalogo() {
         <div className="col-12 col-md-3">
           <FilterPanel
             marcas={marcas}
+            paises={paises}
             filters={filters}
             onChange={handleFilterChange}
             onClear={clearFilters}

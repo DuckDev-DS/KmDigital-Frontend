@@ -1,16 +1,14 @@
+// src/pages/user/pages2/Home.jsx
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import IconGridSection from '../../../components/organisms/IconGridSection.jsx'
 import VisitUsSection from '../../../components/organisms/VisitUsSection.jsx'
+import Spinner from '../../../components/atoms/Spinner.jsx'
 
 import { useHomeData } from '../datapages/HomeData.js'
 import Display from '../../../components/molecules/Display.jsx'
 import VehicleCard from '../../../components/molecules/VehicleCard.jsx'
-
-import { vanish } from '../../../hooks/Vanish.js'
-import LoadingScreen from '../../../components/organisms/LoadingScreen.jsx'
-import Spinner from '../../../components/atoms/Spinner.jsx'
 
 function Home({ onReady }) {
   const navigate = useNavigate()
@@ -26,18 +24,18 @@ function Home({ onReady }) {
     loadingUltimos,
     errorUltimos,
     selectedBrandId,
-    selectedCountryId,
+    selectedPaisId,
     handleBrandSelect,
-    handleCountrySelect,
+    handlePaisSelect,
   } = useHomeData()
 
   const safeMarcas = Array.isArray(marcas) ? marcas : []
   const safePaises = Array.isArray(paisesOrigen) ? paisesOrigen : []
   const safeVehiculos = Array.isArray(ultimosVehiculos) ? ultimosVehiculos : []
 
-  const showSplash = false
-
   const loadingGlobal = loadingMarcas || loadingPaises || loadingUltimos
+
+
 
   useEffect(() => {
     if (!loadingGlobal && typeof onReady === 'function') {
@@ -45,17 +43,18 @@ function Home({ onReady }) {
     }
   }, [loadingGlobal, onReady])
 
-  //if (showSplash) return <LoadingScreen fadeOut={fadeOut} />
-
-  // Navegación usando filtros
   const handleBrandClick = (id, item) => {
     handleBrandSelect(id, item)
-    navigate('/catalogo', { state: { marcaId: id } })
+    if (id != null) {
+      navigate('/catalogo', { state: { marcaId: id } })
+    }
   }
 
-  const handleCountryClick = (id, item) => {
-    handleCountrySelect(id, item)
-    navigate('/catalogo', { state: { paisId: id } })
+  const handlePaisClick = (id, item) => {
+    handlePaisSelect(id, item)
+    if (id != null) {
+      navigate('/catalogo', { state: { paisId: id } })
+    }
   }
 
   return (
@@ -68,7 +67,7 @@ function Home({ onReady }) {
         />
       </section>
 
-      {/* VEHÍCULOS RANDOM (4 CARDS) */}
+      {/* VEHÍCULOS INTERESANTES (4 cards) */}
       <section className="my-5">
         <h2 className="mb-3">Vehículos Interesantes</h2>
 
@@ -103,6 +102,7 @@ function Home({ onReady }) {
         )}
       </section>
 
+
       {/* FILTRO POR MARCAS */}
       {!loadingMarcas && !errorMarcas && safeMarcas.length > 0 && (
         <section className="my-5">
@@ -127,8 +127,8 @@ function Home({ onReady }) {
             title="Filtrar por país de origen"
             subtitle="Explora los vehículos según su país de fabricación."
             items={safePaises}
-            selectedId={selectedCountryId}
-            onSelect={handleCountryClick}
+            selectedId={selectedPaisId}
+            onSelect={handlePaisClick}
             getKey={(p) => p.id}
             getLabel={(p) => p.nombre}
             getImage={(p) => p.imagenPaisOrigen}

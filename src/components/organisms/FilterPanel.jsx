@@ -28,7 +28,7 @@ function FilterPanel({ marcas, paises, filters, onChange, onClear }) {
             onChange={(e) => onChange('marcaId', e.target.value)}
           >
             <option value="">Todas las marcas</option>
-            {marcas?.map((m) => (
+            {marcas.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.nombre}
               </option>
@@ -36,7 +36,7 @@ function FilterPanel({ marcas, paises, filters, onChange, onClear }) {
           </select>
         </div>
 
-        {/* Filtro por país */}
+        {/* Filtro por país de origen */}
         <div className="mb-3">
           <label className="form-label filter-label">País de origen</label>
           <select
@@ -45,7 +45,7 @@ function FilterPanel({ marcas, paises, filters, onChange, onClear }) {
             onChange={(e) => onChange('paisId', e.target.value)}
           >
             <option value="">Todos los países</option>
-            {paises?.map((p) => (
+            {paises.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.nombre}
               </option>

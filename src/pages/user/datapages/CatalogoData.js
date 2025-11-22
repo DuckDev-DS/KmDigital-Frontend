@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import VehiculosService from '../../../services/VehiculosService.jsx'
+import MarcasService from '../../../services/MarcasService.jsx'
+import PaisOrigenService from '../../../services/PaisOrigenService.jsx'
 
 function getMarcaFromVehiculo(v) {
-  if (v.modelo && v.modelo.marca) {
-    return v.modelo.marca
-  }
+  if (v.modelo && v.modelo.marca) return v.modelo.marca
   return null
 }
 
@@ -21,10 +22,8 @@ function getModeloNombre(v) {
   return v.modelo.nombre || ''
 }
 
-// PAÍS DE ORIGEN 
 function getPaisFromVehiculo(v) {
-  // soporta paisOrigen o PaisOrigen
-  return v.paisOrigen || v.PaisOrigen || null
+  return v.paisOrigen || null
 }
 
 function getPaisNombre(v) {
@@ -34,8 +33,12 @@ function getPaisNombre(v) {
   return pais.nombre || ''
 }
 
-// HOOK PRINCIPAL
-export const useCatalogoData = (initialFilters = {}) => {
+export const useCatalogoData = () => {
+  const location = useLocation()
+
+  const marcaIdFromState = location.state?.marcaId ?? ''
+  const paisIdFromState = location.state?.paisId ?? ''
+
   const [vehiculos, setVehiculos] = useState([])
   const [filteredVehiculos, setFilteredVehiculos] = useState([])
 
@@ -45,48 +48,30 @@ export const useCatalogoData = (initialFilters = {}) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  const [filters, setFilters] = useState(() => ({
+  const [filters, setFilters] = useState({
     texto: '',
-    marcaId: initialFilters.marcaId || '',
-    paisId: initialFilters.paisId || '',
+    marcaId: marcaIdFromState ? String(marcaIdFromState) : '',
+    paisId: paisIdFromState ? String(paisIdFromState) : '',
     precioMin: '',
     precioMax: '',
-  }))
+  })
 
-  // Cargar vehículos → derivar marcas y países
+  // Cargar vehículos, marcas y países
   useEffect(() => {
     const load = async () => {
       try {
-        const vehData = await VehiculosService.getAll()
-        const lista = Array.isArray(vehData) ? vehData : []
+        const [vehData, marcasData, paisesData] = await Promise.all([
+          VehiculosService.getAll(),
+          MarcasService.getAll(),
+          PaisOrigenService.getAll(),
+        ])
 
+        const lista = Array.isArray(vehData) ? vehData : []
         setVehiculos(lista)
         setFilteredVehiculos(lista)
 
-        const marcasSet = new Set()
-        const marcasUnicas = []
-
-        const paisesSet = new Set()
-        const paisesUnicos = []
-
-        lista.forEach((v) => {
-          // marcas
-          const marca = getMarcaFromVehiculo(v)
-          if (marca && !marcasSet.has(marca.id)) {
-            marcasSet.add(marca.id)
-            marcasUnicas.push(marca)
-          }
-
-          // países
-          const pais = getPaisFromVehiculo(v)
-          if (pais && !paisesSet.has(pais.id)) {
-            paisesSet.add(pais.id)
-            paisesUnicos.push(pais)
-          }
-        })
-
-        setMarcas(marcasUnicas)
-        setPaises(paisesUnicos)
+        setMarcas(Array.isArray(marcasData) ? marcasData : [])
+        setPaises(Array.isArray(paisesData) ? paisesData : [])
       } catch (err) {
         console.error('Error cargando catálogo:', err)
         setError(true)
@@ -102,7 +87,7 @@ export const useCatalogoData = (initialFilters = {}) => {
   useEffect(() => {
     let lista = [...vehiculos]
 
-    // Búsqueda general
+    // Texto libre: marca, modelo, país, año
     if (filters.texto.trim() !== '') {
       const q = filters.texto.toLowerCase()
 
@@ -110,7 +95,7 @@ export const useCatalogoData = (initialFilters = {}) => {
         const marcaNombre = getMarcaNombre(v).toLowerCase()
         const modeloNombre = getModeloNombre(v).toLowerCase()
         const paisNombre = getPaisNombre(v).toLowerCase()
-        const anioText = String(v.anio || '').toLowerCase()
+        const anioText = String(v.anio || v.year || '').toLowerCase()
 
         return (
           marcaNombre.includes(q) ||
@@ -121,27 +106,33 @@ export const useCatalogoData = (initialFilters = {}) => {
       })
     }
 
-    // FILTRO POR PAÍS 
-    if (filters.paisId) {
+    // Filtro por marca (id)
+    if (filters.marcaId) {
+      const marcaIdNum = Number(filters.marcaId)
       lista = lista.filter((v) => {
-        const pais = getPaisFromVehiculo(v)
-        return pais && String(pais.id) === String(filters.paisId)
+        const marca = getMarcaFromVehiculo(v)
+        if (marca && typeof marca === 'object' && marca.id != null) {
+          return Number(marca.id) === marcaIdNum
+        }
+        return false
       })
     }
 
-    // FILTRO POR MARCA
-    if (filters.marcaId) {
-      lista = lista.filter(
-        (v) =>
-          v.modelo &&
-          v.modelo.marca &&
-          String(v.modelo.marca.id) === String(filters.marcaId)
-      )
+    // Filtro por país (id)
+    if (filters.paisId) {
+      const paisIdNum = Number(filters.paisId)
+      lista = lista.filter((v) => {
+        const pais = getPaisFromVehiculo(v)
+        if (pais && typeof pais === 'object' && pais.id != null) {
+          return Number(pais.id) === paisIdNum
+        }
+        return false
+      })
     }
 
-    // FILTRO POR PRECIO
-    const min = filters.precioMin !== '' ? Number(filters.precioMin) : null
-    const max = filters.precioMax !== '' ? Number(filters.precioMax) : null
+    // Precio
+    const min = filters.precioMin ? Number(filters.precioMin) : null
+    const max = filters.precioMax ? Number(filters.precioMax) : null
 
     if (min !== null && !Number.isNaN(min)) {
       lista = lista.filter((v) => Number(v.precio || 0) >= min)
@@ -155,16 +146,16 @@ export const useCatalogoData = (initialFilters = {}) => {
   }, [filters, vehiculos])
 
   const handleFilterChange = (key, value) => {
-    let val = value
+    let newValue = value
 
     if (key === 'precioMin' || key === 'precioMax') {
       const num = Number(value)
-      val = Number.isNaN(num) || num < 0 ? '' : String(num)
+      newValue = Number.isNaN(num) || num < 0 ? '' : String(num)
     }
 
     setFilters((prev) => ({
       ...prev,
-      [key]: val,
+      [key]: newValue,
     }))
   }
 

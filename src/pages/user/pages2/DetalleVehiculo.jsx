@@ -3,17 +3,14 @@ import { useNavigate } from 'react-router-dom'
 
 import { useVehiculoData } from '../datapages/VehiculoData.js'
 import SectionHeader from '../../../components/molecules/SectionHeader.jsx'
-import LoadingScreen from '../../../components/organisms/LoadingScreen.jsx'
 import CardGrid from '../../../components/organisms/CardGrid.jsx'
 import VehicleDetailColumn from '../../../components/organisms/VehicleDetailColumn.jsx'
 
 
 function DetalleVehiculo() {
   const navigate = useNavigate()
-  const { vehiculo, similares, loading, error } = useVehiculoData()
+  const { vehiculo, similares, error } = useVehiculoData()
 
-
-  if (loading) return <LoadingScreen />
 
   if (error || !vehiculo) {
     return (
