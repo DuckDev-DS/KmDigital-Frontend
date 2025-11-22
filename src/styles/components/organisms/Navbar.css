@@ -103,3 +103,26 @@
   border-color: transparent;
   transform: translateY(-1px);
 }
+
+.km-navbar-cart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.km-navbar-cart-icon {
+  font-size: 1.2rem;
+}
+
+.km-navbar-cart-badge {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.4rem;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 999px;
+  padding: 0 0.35rem;
+  line-height: 1.1;
+}

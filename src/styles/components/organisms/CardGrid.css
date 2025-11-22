@@ -5,3 +5,13 @@
 .card-grid-item {
   display: flex;
 }
+
+
+.card-grid-item > .vehicle-card-link {
+  display: flex;
+  flex: 1;
+}
+
+.card-grid-item > .vehicle-card-link .vehicle-card {
+  flex: 1;
+}

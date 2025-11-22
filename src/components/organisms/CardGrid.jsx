@@ -1,10 +1,16 @@
 import React from 'react'
 import VehicleCard from '../molecules/VehicleCard.jsx'
+import Spinner from '../atoms/Spinner.jsx'
 import '../../styles/components/organisms/CardGrid.css'
 
 function CardGrid({ loading, error, items }) {
   if (loading) {
-    return <p>Cargando resultados...</p>
+    return (
+      <div className="d-flex flex-column align-items-center my-5">
+        <Spinner className="mb-3" />
+        <p>Cargando resultados...</p>
+      </div>
+    )
   }
 
   if (error) {

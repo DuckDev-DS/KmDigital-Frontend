@@ -12,6 +12,7 @@ function LoadingScreen({ fadeOut = false }) {
         alt="KM Digital"
         className="loading-screen-logo"
       />
+      
 
       <Spinner className="text-light" />
 

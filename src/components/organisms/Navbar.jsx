@@ -2,16 +2,18 @@ import React from 'react'
 import { Navbar as RBNavbar, Container, Nav } from 'react-bootstrap'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useCart } from '../../context/CartContext.jsx'
 
 import '../../styles/components/organisms/Navbar.css'
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth()
+  const { cart } = useCart()
   const navigate = useNavigate()
 
   const handleLogout = () => {
     logout()
-    navigate('/') // redirige al home
+    navigate('/') 
   }
 
   return (
@@ -47,12 +49,18 @@ function Navbar() {
               Catálogo
             </Nav.Link>
 
+            {/* 🛒 Carrito */}
             <Nav.Link
               as={NavLink}
-              to="/contacto"
-              className="km-nav-link km-nav-link-btn"
+              to="/carrito"
+              className="km-nav-link km-nav-link-btn km-navbar-cart"
             >
-              Contáctanos
+              <span className="km-navbar-cart-icon">🛒</span>
+              {cart.length > 0 && (
+                <span className="km-navbar-cart-badge">
+                  {cart.length}
+                </span>
+              )}
             </Nav.Link>
 
             {!isAuthenticated && (

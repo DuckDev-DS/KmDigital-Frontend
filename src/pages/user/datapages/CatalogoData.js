@@ -1,23 +1,10 @@
 import { useEffect, useState } from 'react'
 import VehiculosService from '../../../services/VehiculosService.jsx'
-import MarcasService from '../../../services/MarcasService.jsx'
-
-/**
- * Helpers basados en tu estructura:
- * - La marca viene desde el modelo: vehiculo.modelo.marca
- */
 
 function getMarcaFromVehiculo(v) {
-  // marca principal: viene desde el modelo
   if (v.modelo && v.modelo.marca) {
     return v.modelo.marca
   }
-
-  // fallback por si acaso en algún caso viene directo
-  if (v.marca) {
-    return v.marca
-  }
-
   return null
 }
 
@@ -34,42 +21,72 @@ function getModeloNombre(v) {
   return v.modelo.nombre || ''
 }
 
-function getPaisNombre(v) {
-  if (!v.pais) return ''
-  if (typeof v.pais === 'string') return v.pais
-  return v.pais.nombre || ''
+// PAÍS DE ORIGEN 
+function getPaisFromVehiculo(v) {
+  // soporta paisOrigen o PaisOrigen
+  return v.paisOrigen || v.PaisOrigen || null
 }
 
-export const useCatalogoData = () => {
+function getPaisNombre(v) {
+  const pais = getPaisFromVehiculo(v)
+  if (!pais) return ''
+  if (typeof pais === 'string') return pais
+  return pais.nombre || ''
+}
+
+// HOOK PRINCIPAL
+export const useCatalogoData = (initialFilters = {}) => {
   const [vehiculos, setVehiculos] = useState([])
   const [filteredVehiculos, setFilteredVehiculos] = useState([])
 
   const [marcas, setMarcas] = useState([])
+  const [paises, setPaises] = useState([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState(() => ({
     texto: '',
-    marcaId: '',
+    marcaId: initialFilters.marcaId || '',
+    paisId: initialFilters.paisId || '',
     precioMin: '',
     precioMax: '',
-  })
+  }))
 
-  // Cargar vehículos y marcas
+  // Cargar vehículos → derivar marcas y países
   useEffect(() => {
     const load = async () => {
       try {
-        const [vehData, marcasData] = await Promise.all([
-          VehiculosService.getAll(),
-          MarcasService.getAll(),
-        ])
-
+        const vehData = await VehiculosService.getAll()
         const lista = Array.isArray(vehData) ? vehData : []
+
         setVehiculos(lista)
         setFilteredVehiculos(lista)
 
-        setMarcas(Array.isArray(marcasData) ? marcasData : [])
+        const marcasSet = new Set()
+        const marcasUnicas = []
+
+        const paisesSet = new Set()
+        const paisesUnicos = []
+
+        lista.forEach((v) => {
+          // marcas
+          const marca = getMarcaFromVehiculo(v)
+          if (marca && !marcasSet.has(marca.id)) {
+            marcasSet.add(marca.id)
+            marcasUnicas.push(marca)
+          }
+
+          // países
+          const pais = getPaisFromVehiculo(v)
+          if (pais && !paisesSet.has(pais.id)) {
+            paisesSet.add(pais.id)
+            paisesUnicos.push(pais)
+          }
+        })
+
+        setMarcas(marcasUnicas)
+        setPaises(paisesUnicos)
       } catch (err) {
         console.error('Error cargando catálogo:', err)
         setError(true)
@@ -85,7 +102,7 @@ export const useCatalogoData = () => {
   useEffect(() => {
     let lista = [...vehiculos]
 
-    // 🔍 Filtro por texto: marca, modelo, país, año
+    // Búsqueda general
     if (filters.texto.trim() !== '') {
       const q = filters.texto.toLowerCase()
 
@@ -93,7 +110,7 @@ export const useCatalogoData = () => {
         const marcaNombre = getMarcaNombre(v).toLowerCase()
         const modeloNombre = getModeloNombre(v).toLowerCase()
         const paisNombre = getPaisNombre(v).toLowerCase()
-        const anioText = String(v.anio || v.year || '').toLowerCase()
+        const anioText = String(v.anio || '').toLowerCase()
 
         return (
           marcaNombre.includes(q) ||
@@ -104,30 +121,27 @@ export const useCatalogoData = () => {
       })
     }
 
-    // 🏷️ Filtro por marca (marca viene desde v.modelo.marca)
-    if (filters.marcaId) {
-      const marcaIdNum = Number(filters.marcaId)
-
+    // FILTRO POR PAÍS 
+    if (filters.paisId) {
       lista = lista.filter((v) => {
-        const marca = getMarcaFromVehiculo(v)
-
-        // Caso típico: marca es objeto con id
-        if (marca && typeof marca === 'object' && marca.id != null) {
-          return Number(marca.id) === marcaIdNum
-        }
-
-        // Fallback: por si tienes v.marcaId como campo suelto
-        if (v.marcaId && Number(v.marcaId) === marcaIdNum) {
-          return true
-        }
-
-        return false
+        const pais = getPaisFromVehiculo(v)
+        return pais && String(pais.id) === String(filters.paisId)
       })
     }
 
-    // 💰 Filtros de precio
-    const min = filters.precioMin ? Number(filters.precioMin) : null
-    const max = filters.precioMax ? Number(filters.precioMax) : null
+    // FILTRO POR MARCA
+    if (filters.marcaId) {
+      lista = lista.filter(
+        (v) =>
+          v.modelo &&
+          v.modelo.marca &&
+          String(v.modelo.marca.id) === String(filters.marcaId)
+      )
+    }
+
+    // FILTRO POR PRECIO
+    const min = filters.precioMin !== '' ? Number(filters.precioMin) : null
+    const max = filters.precioMax !== '' ? Number(filters.precioMax) : null
 
     if (min !== null && !Number.isNaN(min)) {
       lista = lista.filter((v) => Number(v.precio || 0) >= min)
@@ -141,16 +155,16 @@ export const useCatalogoData = () => {
   }, [filters, vehiculos])
 
   const handleFilterChange = (key, value) => {
-    let newValue = value
+    let val = value
 
     if (key === 'precioMin' || key === 'precioMax') {
       const num = Number(value)
-      newValue = Number.isNaN(num) || num < 0 ? '' : String(num)
+      val = Number.isNaN(num) || num < 0 ? '' : String(num)
     }
 
     setFilters((prev) => ({
       ...prev,
-      [key]: newValue,
+      [key]: val,
     }))
   }
 
@@ -158,6 +172,7 @@ export const useCatalogoData = () => {
     setFilters({
       texto: '',
       marcaId: '',
+      paisId: '',
       precioMin: '',
       precioMax: '',
     })
@@ -167,6 +182,7 @@ export const useCatalogoData = () => {
     vehiculos,
     filteredVehiculos,
     marcas,
+    paises,
     loading,
     error,
     filters,

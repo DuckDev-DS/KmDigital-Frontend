@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import IconGridSection from '../../../components/organisms/IconGridSection.jsx'
 import VisitUsSection from '../../../components/organisms/VisitUsSection.jsx'
@@ -9,8 +10,11 @@ import VehicleCard from '../../../components/molecules/VehicleCard.jsx'
 
 import { vanish } from '../../../hooks/Vanish.js'
 import LoadingScreen from '../../../components/organisms/LoadingScreen.jsx'
+import Spinner from '../../../components/atoms/Spinner.jsx'
 
 function Home({ onReady }) {
+  const navigate = useNavigate()
+
   const {
     marcas,
     paisesOrigen,
@@ -22,18 +26,16 @@ function Home({ onReady }) {
     loadingUltimos,
     errorUltimos,
     selectedBrandId,
-    selectedPaisId,
+    selectedCountryId,
     handleBrandSelect,
-    handlePaisSelect,
+    handleCountrySelect,
   } = useHomeData()
 
-  //Seguridad: si por cualquier motivo vienen undefined, los volvemos arrays vacíos
   const safeMarcas = Array.isArray(marcas) ? marcas : []
   const safePaises = Array.isArray(paisesOrigen) ? paisesOrigen : []
   const safeVehiculos = Array.isArray(ultimosVehiculos) ? ultimosVehiculos : []
 
-  // Splash con vanish
-  const { showSplash, fadeOut } = vanish(1200, 500)
+  const showSplash = false
 
   const loadingGlobal = loadingMarcas || loadingPaises || loadingUltimos
 
@@ -43,8 +45,17 @@ function Home({ onReady }) {
     }
   }, [loadingGlobal, onReady])
 
-  if (showSplash) {
-    return <LoadingScreen fadeOut={fadeOut} />
+  //if (showSplash) return <LoadingScreen fadeOut={fadeOut} />
+
+  // Navegación usando filtros
+  const handleBrandClick = (id, item) => {
+    handleBrandSelect(id, item)
+    navigate('/catalogo', { state: { marcaId: id } })
+  }
+
+  const handleCountryClick = (id, item) => {
+    handleCountrySelect(id, item)
+    navigate('/catalogo', { state: { paisId: id } })
   }
 
   return (
@@ -60,8 +71,15 @@ function Home({ onReady }) {
       {/* VEHÍCULOS RANDOM (4 CARDS) */}
       <section className="my-5">
         <h2 className="mb-3">Vehículos Interesantes</h2>
-        {loadingUltimos && <p>Cargando vehículos...</p>}
-        {errorUltimos && (
+
+        {loadingUltimos && (
+          <div className="d-flex flex-column align-items-center my-4">
+            <Spinner className="text-light mb-2" />
+            <p className="text-light mb-0">Cargando vehículos...</p>
+          </div>
+        )}
+
+        {!loadingUltimos && errorUltimos && (
           <p className="text-danger">
             Ocurrió un error al cargar los vehículos.
           </p>
@@ -93,7 +111,7 @@ function Home({ onReady }) {
             subtitle="Selecciona una marca para explorar vehículos disponibles."
             items={safeMarcas}
             selectedId={selectedBrandId}
-            onSelect={handleBrandSelect}
+            onSelect={handleBrandClick}
             getKey={(m) => m.id}
             getLabel={(m) => m.nombre}
             getImage={(m) => m.imagenMarca}
@@ -109,8 +127,8 @@ function Home({ onReady }) {
             title="Filtrar por país de origen"
             subtitle="Explora los vehículos según su país de fabricación."
             items={safePaises}
-            selectedId={selectedPaisId}
-            onSelect={handlePaisSelect}
+            selectedId={selectedCountryId}
+            onSelect={handleCountryClick}
             getKey={(p) => p.id}
             getLabel={(p) => p.nombre}
             getImage={(p) => p.imagenPaisOrigen}

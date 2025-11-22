@@ -1,12 +1,13 @@
 import React from 'react'
 import '../../styles/components/organisms/FilterPanel.css'
 
-function FilterPanel({ marcas, filters, onChange, onClear }) {
+function FilterPanel({ marcas, paises, filters, onChange, onClear }) {
   return (
     <aside className="filter-panel">
       <div className="filter-panel-card">
         <h2 className="filter-panel-title">Filtros</h2>
 
+        {/* Búsqueda rápida */}
         <div className="mb-3">
           <label className="form-label filter-label">Búsqueda rápida</label>
           <input
@@ -18,6 +19,7 @@ function FilterPanel({ marcas, filters, onChange, onClear }) {
           />
         </div>
 
+        {/* Filtro por marca */}
         <div className="mb-3">
           <label className="form-label filter-label">Marca</label>
           <select
@@ -26,7 +28,7 @@ function FilterPanel({ marcas, filters, onChange, onClear }) {
             onChange={(e) => onChange('marcaId', e.target.value)}
           >
             <option value="">Todas las marcas</option>
-            {marcas.map((m) => (
+            {marcas?.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.nombre}
               </option>
@@ -34,6 +36,24 @@ function FilterPanel({ marcas, filters, onChange, onClear }) {
           </select>
         </div>
 
+        {/* Filtro por país */}
+        <div className="mb-3">
+          <label className="form-label filter-label">País de origen</label>
+          <select
+            className="form-select"
+            value={filters.paisId}
+            onChange={(e) => onChange('paisId', e.target.value)}
+          >
+            <option value="">Todos los países</option>
+            {paises?.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Filtros de precio */}
         <div className="row">
           <div className="col-6 mb-3">
             <label className="form-label filter-label">Precio mínimo</label>
@@ -42,10 +62,11 @@ function FilterPanel({ marcas, filters, onChange, onClear }) {
               className="form-control"
               value={filters.precioMin}
               onChange={(e) => onChange('precioMin', e.target.value)}
-              placeholder="0"
+              placeholder="1000000"
               min="0"
             />
           </div>
+
           <div className="col-6 mb-3">
             <label className="form-label filter-label">Precio máximo</label>
             <input
@@ -59,6 +80,7 @@ function FilterPanel({ marcas, filters, onChange, onClear }) {
           </div>
         </div>
 
+        {/* Botón limpiar */}
         <button
           type="button"
           className="btn btn-outline-light w-100 filter-clear-btn"
