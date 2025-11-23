@@ -1,7 +1,6 @@
 import React from 'react'
-import { createContext, useEffect, useState } from 'react'
-
-export const CartContext = createContext()
+import { useEffect, useState } from 'react'
+import { CartContext } from './CartContextValue.js'
 
 const STORAGE_KEY = 'km_cart'
 
