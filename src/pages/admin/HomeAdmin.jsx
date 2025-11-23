@@ -4,7 +4,7 @@ import EntityCrudPanel from '../../components/organisms/EntityCrudPanel.jsx'
 //import de todos los datos e inputs necesarios
 import { vehiculoData } from '../admin/vehiculos/vehiculoData.jsx'
 import { vehiculoInputs } from '../admin/vehiculos/vehiculoInputs.jsx'
-import { usuarioInputs } from '../admin/usuarios/usuarioInputs.jsx'
+import { usuarioInputs } from './usuarios/usuarioInputs.jsx'
 import { usuarioData } from '../admin/usuarios/usuarioData.jsx'
 import { comunaData } from '../admin/comunas/comunaData.jsx'
 import { comunaInputs } from '../admin/comunas/comunaInputs.jsx'
