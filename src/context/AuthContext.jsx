@@ -1,8 +1,8 @@
-// src/context/AuthContext.jsx
-import React, { createContext, useContext, useState } from 'react'
+import React from 'react'
+import { createContext, useState } from 'react'
 import AuthService from '../services/AuthService.jsx'
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -20,22 +20,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem('kmdigital_user', JSON.stringify(usuario))
       return { ok: true, user: usuario }
     } catch (error) {
-      console.error('[AuthContext] Error en login:', error)
-
-      let message = 'No se pudo iniciar sesión.'
-
-      if (error.response) {
-        console.log('[AuthContext] Respuesta backend:', error.response.data)
-        if (error.response.status === 401 || error.response.status === 403) {
-          message = 'Correo o contraseña incorrectos.'
-        } else if (error.response.status === 404) {
-          message = 'Endpoint /usuarios/login no encontrado (404).'
-        }
-      } else if (error.request) {
-        message = 'No se pudo contactar con el servidor. Revisa la URL de la API.'
-      }
-
-      return { ok: false, message }
+      return { ok: false, message: 'No se pudo iniciar sesión.', error}
     } finally {
       setAuthLoading(false)
     }
@@ -49,21 +34,13 @@ export function AuthProvider({ children }) {
       localStorage.setItem('kmdigital_user', JSON.stringify(nuevoUsuario))
       return { ok: true, user: nuevoUsuario }
     } catch (error) {
-      console.error('[AuthContext] Error en registro:', error)
-      let message = 'No se pudo registrar el usuario.'
-
-      if (error.response?.status === 400) {
-        message = 'Verifica los datos ingresados.'
-      }
-
-      return { ok: false, message }
+      return { ok: false, message: 'No se pudo registrar el usuario.', error }
     } finally {
       setAuthLoading(false)
     }
   }
 
   const logout = () => {
-    console.log('[AuthContext] Logout')
     setUser(null)
     localStorage.removeItem('kmdigital_user')
   }
@@ -71,6 +48,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     isAuthenticated: !!user,
+    isAdmin: user?.rolUsuario?.id === 1,
     authLoading,
     login,
     register,
@@ -78,10 +56,4 @@ export function AuthProvider({ children }) {
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth debe usarse dentro de un AuthProvider')
-  return ctx
 }

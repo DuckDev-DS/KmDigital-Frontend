@@ -1,7 +1,7 @@
 import React from 'react'
-import { useCart } from '../../context/CartContext.jsx'
+import { useCart } from '../../context/useCart.jsx'
 
-function VehicleDetailColumn({ vehiculo, onBack, onCatalog }) {
+function VehicleDetailColumn({ vehiculo, onBack }) {
   const { addToCart, cart } = useCart()
 
   const {
@@ -16,7 +16,7 @@ function VehicleDetailColumn({ vehiculo, onBack, onCatalog }) {
     paisOrigen,
     tipoCombustible,
     sucursal,
-    transmission,
+    transmision,
   } = vehiculo
 
   const titulo = nombre || modelo?.nombre || 'Detalle del vehículo'
@@ -75,7 +75,7 @@ function VehicleDetailColumn({ vehiculo, onBack, onCatalog }) {
           </div>
           <div className="col-6 mb-2">
             <strong>Transmisión:</strong>
-            <div>{transmission?.nombre ?? '—'}</div>
+            <div>{transmision?.nombre ?? '—'}</div>
           </div>
           <div className="col-6 mb-2">
             <strong>Sucursal:</strong>

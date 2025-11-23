@@ -10,7 +10,6 @@ function IconGridSection({
   getKey = (item) => item.id,
   getLabel = (item) => item.label,
   getImage = (item) => item.image,
-  showFilter = true,
 }) {
   const trackRef = useRef(null)
 

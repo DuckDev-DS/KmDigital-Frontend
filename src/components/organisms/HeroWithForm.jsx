@@ -14,8 +14,7 @@ function HeroWithForm({
   values = {},
   onChange,
   onSubmit,
-  submitLabel = 'Enviar',
-  rightContent = null,
+  submitLabel = 'Enviar'
 }) {
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -83,16 +82,6 @@ function HeroWithForm({
             {submitLabel}
           </Button>
         </form>
-      </Col>
-
-      <Col md={6} className="hero-with-form-right">
-        {rightContent ?? (
-          <div className="hero-with-form-right-panel">
-            <Text as="h3" className="fw-semibold text-center px-4">
-              Una experiencia digital moderna para tu proyecto.
-            </Text>
-          </div>
-        )}
       </Col>
     </Row>
   )

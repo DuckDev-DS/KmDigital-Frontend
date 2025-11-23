@@ -1,4 +1,4 @@
-import { useCart } from '../../../context/CartContext.jsx'
+import { useCart } from '../../../context/useCart.jsx'
 
 export function useCarritoData() {
   const { cart, removeFromCart, clearCart } = useCart()

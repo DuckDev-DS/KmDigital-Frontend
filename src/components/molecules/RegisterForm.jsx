@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext.jsx'
+import { useAuth } from '../../context/useAuth.jsx'
 import ComunasService from '../../services/ComunasService.jsx'
 import '../../styles/components/molecules/RegisterForm.css'
 

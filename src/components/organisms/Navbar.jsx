@@ -1,13 +1,13 @@
 import React from 'react'
 import { Navbar as RBNavbar, Container, Nav } from 'react-bootstrap'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext.jsx'
-import { useCart } from '../../context/CartContext.jsx'
+import { useCart } from '../../context/useCart.jsx'
+import { useAuth } from '../../context/useAuth.jsx'
 
 import '../../styles/components/organisms/Navbar.css'
 
 function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, isAdmin, logout } = useAuth()
   const { cart } = useCart()
   const navigate = useNavigate()
 
@@ -49,7 +49,17 @@ function Navbar() {
               Catálogo
             </Nav.Link>
 
-            {/* 🛒 Carrito */}
+            {isAdmin && (
+              <Nav.Link
+                as={NavLink}
+                to="/admin"
+                className="km-nav-link km-nav-link-btn"
+              >
+                Admin
+              </Nav.Link>
+            )}
+
+            {/* Carrito */}
             <Nav.Link
               as={NavLink}
               to="/carrito"
