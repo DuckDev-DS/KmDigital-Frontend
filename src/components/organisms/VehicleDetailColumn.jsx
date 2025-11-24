@@ -17,6 +17,7 @@ function VehicleDetailColumn({ vehiculo, onBack }) {
     tipoCombustible,
     sucursal,
     transmision,
+    carroceria,
   } = vehiculo
 
   const titulo = nombre || modelo?.nombre || 'Detalle del vehículo'
@@ -76,6 +77,10 @@ function VehicleDetailColumn({ vehiculo, onBack }) {
           <div className="col-6 mb-2">
             <strong>Transmisión:</strong>
             <div>{transmision?.nombre ?? '—'}</div>
+          </div>
+          <div className="col-6 mb-2">
+            <strong>Tipo de carrocería:</strong>
+            <div>{carroceria?.nombre ?? '—'}</div>
           </div>
           <div className="col-6 mb-2">
             <strong>Sucursal:</strong>

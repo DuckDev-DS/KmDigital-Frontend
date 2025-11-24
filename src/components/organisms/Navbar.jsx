@@ -13,7 +13,7 @@ function Navbar() {
 
   const handleLogout = () => {
     logout()
-    navigate('/') 
+    navigate('/')
   }
 
   return (
@@ -71,6 +71,15 @@ function Navbar() {
                   {cart.length}
                 </span>
               )}
+            </Nav.Link>
+
+            {/*Perfil */}
+            <Nav.Link
+              as={NavLink}
+              to="/perfil"
+              className="km-nav-link km-nav-link-btn km-nav-link-perfil"
+            >
+              Perfil
             </Nav.Link>
 
             {!isAuthenticated && (

@@ -47,6 +47,9 @@ function EntityTable({ title, columns = [], data = [], onEdit, onDelete }) {
                 const value = item[col]
 
                 // Función para detectar el contenido de cada celda (si es null, array u objeto) se supone facilita la visualización de datos complejos.
+                // si el valor es null o undefined retorna string vacío
+                // si es un array mapea cada elemento buscando nombre o toString y los une con comas
+                // si es un objeto busca nombre, marca, id o hace un JSON.stringify
                 const renderValue = (v) => {
                   if (v === null || v === undefined) return ''
                   if (Array.isArray(v)) {

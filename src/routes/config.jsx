@@ -5,6 +5,7 @@ const Home = lazy(() => import('../pages/user/pages2/Home.jsx'))
 const Catalogo = lazy(() => import('../pages/user/pages2/Catalogo.jsx'))
 const Carrito = lazy(() => import('../pages/user/pages2/Carrito.jsx'))
 const DetalleVehiculo = lazy(() => import('../pages/user/pages2/DetalleVehiculo.jsx'))
+const Profile = lazy(() => import('../pages/user/pages2/Perfil.jsx'))
 
 const Login = lazy(() => import('../pages/Auth/Login.jsx'))
 const Register = lazy(() => import('../pages/Auth/Register.jsx'))
@@ -18,6 +19,7 @@ const publicRoutes = [
     { path: '/register', element: <Register />, showNavbar: false },
     { path: '/catalogo', element: <Catalogo />, showNavbar: true },
     { path: '/carrito', element: <Carrito />, showNavbar: true },
+    { path: '/perfil', element: <Profile />, showNavbar: true },
     { path: '/vehiculo/:id', element: <DetalleVehiculo />, showNavbar: true },
 ]
 
