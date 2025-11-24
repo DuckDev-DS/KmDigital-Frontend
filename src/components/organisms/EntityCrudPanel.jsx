@@ -3,25 +3,20 @@ import EntityTable from './EntityTable'
 import EntityFormModal from './EntityFormModal'
 import '../../styles/components/organisms/EntityCrudPanel.css'
 
-//Refactoricé porque era mucho hardcodeo y manejaba muchos elementos
-//cree el EntityFormModal.jsx para manejar el modal y el formulario
-
-// Componente genérico para CRUD
 function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
     const [showList, setShowList] = useState(true)
     const toggleShowList = () => setShowList((s) => !s)
+    const [showForm, setShowForm] = useState(true)
+    const toggleShowForm = () => setShowForm((s) => !s)
 
-    // Estados para items y errores
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    // Estados para modal/formulario
     const [isOpen, setIsOpen] = useState(false)
     const [editingId, setEditingId] = useState(null)
     const [initialData, setInitialData] = useState({})
 
-    // Cargar datos iniciales
     useEffect(() => {
         reloadItems()
     }, [service])
@@ -40,7 +35,6 @@ function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
         }
     }
 
-    // Editar: abrir modal con datos iniciales
     const handleEdit = (item) => {
         const normalized = {}
         inputsConfig.forEach((f) => {
@@ -56,7 +50,13 @@ function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
         setIsOpen(true)
     }
 
-    // Eliminar
+    // limpiar desde el padre
+    const handleCleanForm = () => {
+        setInitialData({})
+        setEditingId(null)
+        setIsOpen(true) // mantiene abierto el modal pero vacío
+    }
+
     const handleDelete = async (id) => {
         try {
         await service.delete(id)
@@ -66,7 +66,6 @@ function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
         }
     }
 
-    // Guardar (crear/editar)
     const handleSubmit = async (payload, editingId) => {
         try {
         if (editingId) {
@@ -101,13 +100,16 @@ function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
             <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary me-2"
-                onClick={() => {
-                setInitialData({})
-                setEditingId(null)
-                setIsOpen(true)
-                }}
+                onClick={toggleShowForm}
             >
-                Crear nuevo
+                {showForm ? 'Minimizar formulario' : 'Mostrar formulario'}
+            </button>
+            <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary me-2"
+                onClick={handleCleanForm}
+            >
+                Limpiar formulario
             </button>
             <span className="badge bg-primary">{items.length}</span>
             </div>
@@ -123,16 +125,16 @@ function EntityCrudPanel({ dataConfig, inputsConfig, service }) {
             />
         )}
 
-        {/* Modal/Formulario */}
-        <EntityFormModal
+        {showForm && (
+            <EntityFormModal
+            key={editingId ?? 'create'}
             isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
             onSubmit={handleSubmit}
             inputsConfig={inputsConfig}
-            service={service}
             initialData={initialData}
             editingId={editingId}
-        />
+            />
+        )}
         </div>
     )
 }

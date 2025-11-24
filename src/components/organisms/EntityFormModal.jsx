@@ -5,12 +5,11 @@ import HeroWithForm from './HeroWithForm'
 
 function EntityFormModal({
     isOpen,
-    onClose,
     onSubmit,
     inputsConfig,
     initialData = {},
     editingId
-}) {
+    }) {
     const [fields, setFields] = useState(
         inputsConfig.map((input) => ({
         key: input.name,
@@ -22,7 +21,7 @@ function EntityFormModal({
     )
     const [formValues, setFormValues] = useState(initialData || {})
 
-  // cargar opciones de selects
+    // cargar opciones de selects
     useEffect(() => {
         const loadSelects = async () => {
         const selects = inputsConfig.filter((i) => i.type === 'select' && i.service)
@@ -48,20 +47,13 @@ function EntityFormModal({
             }))
         )
         }
-        loadSelects()}, [inputsConfig])
+        loadSelects()
+    }, [inputsConfig])
 
-  // actualizar valores
     const handleChange = (key, value) => {
         setFormValues((prev) => ({ ...prev, [key]: value }))
     }
 
-  // limpiar formulario
-    const handleClose = () => {
-        setFormValues({})
-        onClose()
-    }
-
-    // enviar formulario
     const handleSubmit = async () => {
         try {
         const payload = {}
@@ -73,9 +65,7 @@ function EntityFormModal({
             payload[f.key] = value
             }
         })
-
         await onSubmit(payload, editingId)
-        handleClose()
         } catch (error) {
         console.error('Error en submit:', error)
         alert('Error al enviar el formulario')
@@ -86,15 +76,6 @@ function EntityFormModal({
 
     return (
         <div className="entity-form-modal">
-        <div className="d-flex justify-content-end mb-2">
-            <button
-            type="button"
-            className="btn btn-sm btn-outline-secondary"
-            onClick={handleClose}
-            >
-            Cerrar
-            </button>
-        </div>
         <HeroWithForm
             title="Formulario"
             subtitle="Completa los datos"
