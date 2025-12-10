@@ -3,7 +3,7 @@ import React from "react";
 function Tokens() {
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Tokens</h1>
+      <h1>¿Donde se pueden ver los tokens?</h1>
 
       <img
         src="https://pbs.twimg.com/media/EQdATjFXUAAVY_E.jpg"
