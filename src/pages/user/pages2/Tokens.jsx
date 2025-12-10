@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Tokens() {
+function Tokens() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Tokens</h1>
@@ -17,4 +17,5 @@ export default function Tokens() {
     </div>
   );
 }
-    
+
+export default Tokens()
