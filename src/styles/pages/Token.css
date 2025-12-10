@@ -1,0 +1,19 @@
+.tokens-container {
+  padding: 20px;
+}
+
+.tokens-image {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.tokens-button {
+  margin-bottom: 20px;
+}
+
+.result-image {
+  margin-top: 20px;
+}
