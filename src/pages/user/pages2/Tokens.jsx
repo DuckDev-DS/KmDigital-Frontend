@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "../../../components/atoms/Button";
 import "../../../styles/pages/Token.css";
-import "../../../../public/img/profe.jpg"
+import profe from"../../../../public/img/profe.jpg"
 
 function Tokens() {
   const [showImage, setShowImage] = useState(false);
@@ -27,7 +27,7 @@ function Tokens() {
       {showImage && (
         <img
           className="tokens-image result-image"
-          src= "../../../../public/img/profe.jpg"
+          src= {profe}
           alt="Resultado"
         />
       )}
