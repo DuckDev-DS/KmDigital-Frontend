@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../../components/atoms/Button";
-import "../../../styles/pages/Tokens.css";
+import "../../../styles/pages/Token.css";
 import "../../../../public/img/profe.jpg"
 
 function Tokens() {
