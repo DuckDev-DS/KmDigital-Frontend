@@ -11,6 +11,7 @@ const Login = lazy(() => import('../pages/Auth/Login.jsx'))
 const Register = lazy(() => import('../pages/Auth/Register.jsx'))
 
 const HomeAdmin = lazy(() => import('../pages/admin/HomeAdmin.jsx'))
+const Tokens = lazy(() => import('../pages/user/pages2/Tokens.jsx'))
 
 // Rutas públicas (usuario cliente)
 const publicRoutes = [
@@ -21,6 +22,7 @@ const publicRoutes = [
     { path: '/carrito', element: <Carrito />, showNavbar: true },
     { path: '/perfil', element: <Profile />, showNavbar: true },
     { path: '/vehiculo/:id', element: <DetalleVehiculo />, showNavbar: true },
+    { path: '/tokens', element: <Tokens />, showNavbar: true },
 ]
 
 // Rutas admin (protegidas por rolUsuario.id === 1)
