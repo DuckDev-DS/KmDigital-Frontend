@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import Button from "../../../components/atoms/Button";
 import "../../../styles/pages/Token.css";
-import profe from"../../../../public/img/profe.png"
+import profe from"../../../../public/img/profe.jpg"
 
 function Tokens() {
+  const [showImage, setShowImage] = useState(false);
   return (
     <div className="tokens-container">
       <h1>¿Cómo se hacen los Tokens?</h1>
@@ -10,9 +12,25 @@ function Tokens() {
 
       <img
         className="tokens-image"
-        src= {profe}
+        src="https://pbs.twimg.com/media/EQdATjFXUAAVY_E.jpg"
         alt="Imagen de token"
       />
+
+      <Button
+        variant="primary"
+        onClick={() => setShowImage(true)}
+        className="tokens-button"
+      >
+        Resultados!
+      </Button>
+
+      {showImage && (
+        <img
+          className="tokens-image result-image"
+          src= {profe}
+          alt="Resultado"
+        />
+      )}
     </div>
   );
 }

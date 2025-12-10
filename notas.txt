@@ -1,0 +1,37 @@
+
+  HeroWithForm
+ 
+  Props:
+  - title: string
+  - subtitle: string
+  - fields: [
+      {
+        key: string,
+        label: string,
+        type: 'text' | 'select',
+        placeholder?: string,
+        options?: array,          // para select
+        optionLabel?: string,     // nombre del campo para mostrar (por defecto "nombre")
+        optionValue?: string      // nombre del campo para value (por defecto "id")
+      }
+    ]
+  - values: objeto con los valores actuales { [key]: any }
+  - onChange: (key, value) => void
+  - onSubmit: (values) => void
+  - submitLabel: string (texto del botón)
+  - rightContent: elemento React (opcional, por ej. un banner o imagen)
+
+
+    IconGridSection
+    
+     Props:
+     - title: string
+     - subtitle: string
+     - items: array de objetos
+     - getKey: (item) => string | number
+     - getLabel: (item) => string
+     - getIconLetter?: (item) => string  // opcional, inicial por defecto
+     - renderIcon?: (item) => ReactNode  // opcional, para usar imagenes/logos
+     - selectedId?: string | number
+     - onSelect?: (id, item) => void
+    
