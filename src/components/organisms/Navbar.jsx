@@ -82,6 +82,14 @@ function Navbar() {
               Perfil
             </Nav.Link>
 
+            <Nav.Link
+              as={NavLink}
+              to="/tokens"
+              className="km-nav-link km-nav-link-btn"
+            >
+              Tokens
+            </Nav.Link>
+            
             {!isAuthenticated && (
               <Nav.Link
                 as={NavLink}
